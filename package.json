@@ -9,7 +9,8 @@
     "migrate": "npm run migrate --prefix backend",
     "seed": "npm run seed --prefix backend",
     "lint": "npm run lint --prefix frontend",
-    "build": "npm run build --prefix frontend"
+    "build": "npm run build --prefix frontend",
+    "test": "npm test --prefix frontend"
   },
   "license": "MIT"
 }
