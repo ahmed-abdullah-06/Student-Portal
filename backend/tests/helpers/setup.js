@@ -1,4 +1,4 @@
-require('dotenv').config({ path: __dirname + '/../.env' });
+require('dotenv').config({ path: __dirname + '/../../.env' });
 
 // Test environment overrides — applied before any app module loads.
 process.env.NODE_ENV = 'test';
