@@ -173,6 +173,12 @@ cd backend
 $env:DATABASE_URL_TEST='postgresql://postgres:123456@127.0.0.1:5432/student_portal_test'
 npx prisma migrate deploy      # once, against the test DB
 npm run test                   # vitest: 91 integration tests (auth, RBAC, sessions, 2FA login, settings, pagination, docs, multi-tenancy, platform, payments/Stripe webhooks, CSV importers, course workspace, task submissions, portal role gating)
+
+cd ../frontend
+npm run test                   # vitest: 19 component/unit tests across 8 files
+npm run lint                   # oxlint (0 errors; warnings are pre-existing and known)
+npm run test:e2e               # Playwright: 30 E2E tests × chromium/mobile/tablet
+                               #   starts Vite on :5173 itself; backend must run on :5000
 ```
 
 ### Docker
@@ -194,7 +200,7 @@ npm run loadtest      # k6 smoke+load scenarios against a running server (BASE_U
 ```
 
 ### CI
-`.github/workflows/ci.yml` runs on push/PR: backend `npm ci → prisma generate → migrate deploy → vitest` against a `postgres:18` service, frontend `lint + build`.
+`.github/workflows/ci.yml` runs on push/PR: backend `npm ci → prisma generate → migrate deploy → vitest` against a `postgres:18` service, frontend `lint + vitest + build`, and an `e2e` job that provisions Postgres, migrates, boots the API, installs Playwright chromium and runs the full E2E suite (chromium + mobile + tablet projects; report uploaded as an artifact on failure). A `secrets-scan` job runs gitleaks.
 
 ## Multi-Tenancy
 
