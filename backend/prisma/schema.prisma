@@ -390,6 +390,7 @@ model Enrollment {
   @@unique([studentId, sectionId])
   @@index([semester])
   @@index([studentId, semester, status])
+  @@index([studentId, status])
   @@index([sectionId, status])
   @@index([status])
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -411,6 +412,7 @@ model AttendanceRecord {
 
   @@unique([enrollmentId, date, lectureNumber])
   @@index([date])
+  @@index([enrollmentId, date])
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
@@ -537,6 +539,7 @@ model AuditLog {
   @@index([createdAt])
   @@index([action])
   @@index([userId])
+  @@index([entityId, createdAt])
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
@@ -609,6 +612,7 @@ model ChatMessage {
 
   @@index([senderId, receiverId])
   @@index([receiverId, senderId])
+  @@index([receiverId, createdAt])
   @@index([createdAt])
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
