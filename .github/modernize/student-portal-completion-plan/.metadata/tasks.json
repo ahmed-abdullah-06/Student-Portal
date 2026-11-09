@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Sequential implementation tasks scoped to feasible unchecked requirements in project_completion_audit.md. No implementation was run.",
+  "tasks": [
+    {
+      "type": "transform",
+      "id": "001-transform-frontend-e2e",
+      "description": "Add browser end-to-end coverage for the critical student, faculty, admin, and authentication journeys.",
+      "requirements": "Addresses the unchecked E2E test requirement only. Cover student login/dashboard/course registration/marks/fee/logout, faculty attendance/marks/assignment, admin student/section/challan/approval, wrong-role rejection, 2FA, and password reset. Preserve existing frontend unit/component tests and CI wiring.",
+      "dependencies": [],
+      "skills": [{"name": "javascript-frontend-testing", "location": "builtin"}],
+      "successCriteria": {"passBuild": "true", "generateNewUnitTests": "true", "passUnitTests": "true"}
+    },
+    {
+      "type": "transform",
+      "id": "002-transform-accessibility-compliance",
+      "description": "Bring all interactive portal flows to verified WCAG 2.1 AA accessibility compliance.",
+      "requirements": "Addresses unchecked ARIA coverage, keyboard completion, color contrast, form labels, error announcements, automated axe/Lighthouse findings, and jsx-a11y linting. Do not redo existing focus management, screen-reader attributes, or skip-link work except where audits identify regressions.",
+      "dependencies": ["001-transform-frontend-e2e"],
+      "skills": [{"name": "javascript-accessibility", "location": "builtin"}],
+      "successCriteria": {"passBuild": "true", "generateNewUnitTests": "true", "passUnitTests": "true"}
+    },
+    {
+      "type": "security",
+      "id": "003-security-hardening-final",
+      "description": "Close the remaining production security findings and produce staging penetration-test evidence.",
+      "requirements": "Addresses unchecked API response sanitization, session-fixation review/fix, 2FA brute-force protection, CSP nonce applicability, exact CORS verification, raw-query injection review, and OWASP ZAP or Burp findings. Keep existing JWT refresh/session-version behavior and dependency-audit result. Do not store credentials or findings with secrets in the plan.",
+      "dependencies": ["002-transform-accessibility-compliance"],
+      "skills": [{"name": "javascript-security-hardening", "location": "builtin"}],
+      "successCriteria": {"passBuild": "true", "generateNewUnitTests": "true", "passUnitTests": "true"}
+    },
+    {
+      "type": "transform",
+      "id": "004-transform-backup-resilience",
+      "description": "Make database backups off-site, alerting-enabled, and supported by recurring restore-drill evidence.",
+      "requirements": "Addresses unchecked off-site backup delivery, backup-failure notification, and monthly restore-drill evidence. Preserve existing backup scripts, retention purge, systemd timers, and disaster-recovery documentation. Provider and alert destination remain configurable pending the open question.",
+      "dependencies": ["003-security-hardening-final"],
+      "skills": [{"name": "javascript-operations-resilience", "location": "builtin"}],
+      "successCriteria": {"passBuild": "true", "generateNewUnitTests": "true", "passUnitTests": "true"}
+    },
+    {
+      "type": "transform",
+      "id": "005-transform-legal-compliance",
+      "description": "Complete the remaining legal and consent artifacts required for production handover.",
+      "requirements": "Addresses unchecked Terms of Service acceptance, jurisdiction-appropriate cookie consent, and a data-processing-agreement template. Preserve the existing Privacy Policy, export, and anonymization features. Legal copy must be configurable and reviewed by the university legal owner.",
+      "dependencies": ["004-transform-backup-resilience"],
+      "skills": [{"name": "javascript-compliance", "location": "builtin"}],
+      "successCriteria": {"passBuild": "true", "generateNewUnitTests": "true", "passUnitTests": "true"}
+    },
+    {
+      "type": "transform",
+      "id": "006-transform-email-templates",
+      "description": "Provide branded HTML notification templates and an authorized admin preview workflow.",
+      "requirements": "Addresses unchecked HTML templates for welcome, password reset, fee reminder, payment receipt, grade posted, assignment confirmation, and scholarship status, plus admin template preview. Integrate with existing notification preferences rather than recreating them; support plain-text fallback and safe variable escaping.",
+      "dependencies": ["005-transform-legal-compliance"],
+      "skills": [{"name": "javascript-email-notifications", "location": "builtin"}],
+      "successCriteria": {"passBuild": "true", "generateNewUnitTests": "true", "passUnitTests": "true"}
+    },
+    {
+      "type": "transform",
+      "id": "007-transform-realtime-chat-presence",
+      "description": "Complete real-time messaging UX beyond the existing authenticated notification channel.",
+      "requirements": "Addresses remaining unchecked real-time chat delivery, online status indicators, and visible typing indicators. Preserve the existing WebSocket server, JWT/token-version authentication, tenant filtering, notification broadcast, and exponential reconnect hook. Add tests for unauthorized, revoked, cross-tenant, multi-user, disconnect, and reconnect behavior.",
+      "dependencies": ["006-transform-email-templates"],
+      "skills": [{"name": "javascript-websocket-realtime", "location": "builtin"}],
+      "successCriteria": {"passBuild": "true", "generateNewUnitTests": "true", "passUnitTests": "true"}
+    },
+    {
+      "type": "transform",
+      "id": "008-transform-error-isolation",
+      "description": "Add route-level crash isolation while preserving global offline and session-expiration UX.",
+      "requirements": "Addresses only the unchecked per-route error-boundary requirement. A failure in one page must not blank the application or unrelated routes; provide recovery and diagnostics without exposing stack traces or secrets.",
+      "dependencies": ["007-transform-realtime-chat-presence"],
+      "skills": [{"name": "javascript-react-reliability", "location": "builtin"}],
+      "successCriteria": {"passBuild": "true", "generateNewUnitTests": "true", "passUnitTests": "true"}
+    },
+    {
+      "type": "transform",
+      "id": "009-transform-full-i18n",
+      "description": "Translate all portal content and verify English/Urdu locale behavior across the application.",
+      "requirements": "Addresses unchecked page-content translation, 500+ missing keys, locale-aware date/number formatting, pluralization, RTL testing, and hardcoded-string extraction. Preserve existing English/Urdu infrastructure and navigation translations. No untranslated hardcoded user-facing strings remain in JSX except approved technical content.",
+      "dependencies": ["008-transform-error-isolation"],
+      "skills": [{"name": "javascript-react-internationalization", "location": "builtin"}],
+      "successCriteria": {"passBuild": "true", "generateNewUnitTests": "true", "passUnitTests": "true"}
+    },
+    {
+      "type": "transform",
+      "id": "010-transform-scale-performance",
+      "description": "Make list-heavy portal workflows safe and responsive at university-scale data volumes.",
+      "requirements": "Addresses unchecked pagination verification for all large list endpoints, database-index audit, virtualization of very long tables, completion review of heavy-page lazy loading, photo compression/resize coordination, and stale-while-revalidate caching for stable catalog/fee/branding data. Preserve existing pagination and lazy-loaded routes where already correct.",
+      "dependencies": ["009-transform-full-i18n"],
+      "skills": [{"name": "javascript-node-react-performance", "location": "builtin"}],
+      "successCriteria": {"passBuild": "true", "generateNewUnitTests": "true", "passUnitTests": "true"}
+    },
+    {
+      "type": "transform",
+      "id": "011-transform-responsive-mobile",
+      "description": "Verify and correct the portal at mobile and tablet breakpoints with touch-friendly interactions.",
+      "requirements": "Addresses unchecked 360–430px and 768–1024px audits, table/modal/form/sidebar behavior, 44px touch targets, and mobile-specific dismissal/refresh/navigation UX. Test all supported pages without changing desktop behavior or existing dark-mode work.",
+      "dependencies": ["010-transform-scale-performance"],
+      "skills": [{"name": "javascript-react-responsive-ui", "location": "builtin"}],
+      "successCriteria": {"passBuild": "true", "generateNewUnitTests": "true", "passUnitTests": "true"}
+    },
+    {
+      "type": "transform",
+      "id": "012-transform-documents-pdf",
+      "description": "Complete university-branded printable and PDF documents.",
+      "requirements": "Addresses unchecked branding for transcript and domicile certificate PDFs, printable challan voucher generation, and formal admit-card PDF with photo, exam schedule, and rules. Preserve existing print CSS and PDF generation behavior; branding assets and registrar details are supplied by the owner.",
+      "dependencies": ["011-transform-responsive-mobile"],
+      "skills": [{"name": "javascript-pdf-document-generation", "location": "builtin"}],
+      "successCriteria": {"passBuild": "true", "generateNewUnitTests": "true", "passUnitTests": "true"}
+    },
+    {
+      "type": "transform",
+      "id": "013-transform-frontend-observability",
+      "description": "Complete frontend error reporting and operational telemetry.",
+      "requirements": "Addresses unchecked structured frontend error logging and frontend Sentry integration with the existing error boundary. Preserve backend telemetry, Grafana dashboard, log rotation, and alert rules. Scrub tokens, personal data, and payment data before transport.",
+      "dependencies": ["012-transform-documents-pdf"],
+      "skills": [{"name": "javascript-frontend-observability", "location": "builtin"}],
+      "successCriteria": {"passBuild": "true", "generateNewUnitTests": "true", "passUnitTests": "true"}
+    },
+    {
+      "type": "transform",
+      "id": "014-transform-student-photo-processing",
+      "description": "Harden student profile-photo processing and consistent presentation.",
+      "requirements": "Addresses the remaining crop/resize and image-optimization gap after confirming the existing upload endpoint, profile/admit-card display, schema field, and default avatar. Reject unsafe content, preserve tenant ownership, and avoid orphaned files.",
+      "dependencies": ["013-transform-frontend-observability"],
+      "skills": [{"name": "javascript-media-upload-processing", "location": "builtin"}],
+      "successCriteria": {"passBuild": "true", "generateNewUnitTests": "true", "passUnitTests": "true"}
+    },
+    {
+      "type": "transform",
+      "id": "015-transform-analytics-calendar",
+      "description": "Add attendance heatmap analytics and connect calendar events to semester dates.",
+      "requirements": "Addresses unchecked attendance heatmap and semester-date integration only. Preserve existing admin/student calendar CRUD and other completed analytics charts. Respect tenant and role boundaries and define empty/loading states.",
+      "dependencies": ["014-transform-student-photo-processing"],
+      "skills": [{"name": "javascript-portal-analytics", "location": "builtin"}],
+      "successCriteria": {"passBuild": "true", "generateNewUnitTests": "true", "passUnitTests": "true"}
+    },
+    {
+      "type": "transform",
+      "id": "016-transform-faculty-directory",
+      "description": "Expose instructor profile information to authorized students.",
+      "requirements": "Addresses the unchecked student-facing faculty profile view and its route requirement, while preserving the completed faculty self-profile/edit page. Show only approved office hours/contact information, enforce enrollment/tenant authorization, and avoid exposing private faculty fields.",
+      "dependencies": ["015-transform-analytics-calendar"],
+      "skills": [{"name": "javascript-react-role-based-features", "location": "builtin"}],
+      "successCriteria": {"passBuild": "true", "generateNewUnitTests": "true", "passUnitTests": "true"}
+    },
+    {
+      "type": "transform",
+      "id": "017-transform-admin-bulk-operations",
+      "description": "Add safe bulk administration and cross-entity student activity views.",
+      "requirements": "Addresses unchecked bulk user activation/deactivation, batch password reset, section/department notice targeting, global admin search, and per-student activity dashboard. Require confirmation, audit logging, authorization, rate limits, partial-failure reporting, and tenant isolation.",
+      "dependencies": ["016-transform-faculty-directory"],
+      "skills": [{"name": "javascript-admin-workflows", "location": "builtin"}],
+      "successCriteria": {"passBuild": "true", "generateNewUnitTests": "true", "passUnitTests": "true"}
+    }
+  ],
+  "metadata": {
+    "planName": "student-portal-completion-plan",
+    "projectName": "Student-Portal",
+    "language": "javascript",
+    "createdAt": "2026-10-24T10:02:12.341+05:00",
+    "version": "1.0"
+  }
+}

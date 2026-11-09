@@ -1,0 +1,21 @@
+batch: completion-followup-2026-10-24
+status: complete
+tasks:
+  - id: E2E-A11Y
+    status: complete
+    evidence: frontend/e2e/accessibility.spec.js; frontend/e2e/critical-paths.spec.js
+  - id: ATTENDANCE-HEATMAP
+    status: complete
+    evidence: frontend/src/pages/student/Attendance.jsx
+  - id: FACULTY-STUDENT-VIEW
+    status: complete
+    evidence: backend/src/routes/studentRoutes.js; backend/src/controllers/studentController.js; frontend/src/pages/student/CourseWorkspace.jsx
+  - id: CALENDAR-SEMESTER
+    status: complete
+    evidence: backend/src/controllers/calendarController.js
+  - id: PHOTO-OPTIMIZATION
+    status: complete
+    evidence: frontend/src/pages/student/Profile.jsx
+  - id: CHALLAN-PDF
+    status: complete
+    evidence: frontend/src/pages/student/FeeChallan.jsx
