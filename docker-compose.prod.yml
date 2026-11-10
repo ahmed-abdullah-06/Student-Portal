@@ -1,0 +1,45 @@
+# Production overrides: run with
+#   docker compose --env-file deploy/.env.images -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# - backend/frontend images come from the CI registry (no local builds)
+# - backend/frontend are NOT published to the host; Caddy proxies them
+# - Caddy terminates TLS (automatic Let's Encrypt certificates)
+# - requires Docker Compose >= 2.24 (!reset / !override)
+services:
+  db:
+    restart: unless-stopped
+
+  backend:
+    image: ${BACKEND_IMAGE:-student-portal-backend:latest}
+    restart: unless-stopped
+    ports: !reset []
+    environment:
+      CLIENT_URL: https://${DOMAIN:?set DOMAIN in .env}
+      TENANT_BASE_DOMAIN: ${TENANT_BASE_DOMAIN:-}
+
+  frontend:
+    image: ${FRONTEND_IMAGE:-student-portal-frontend:latest}
+    restart: unless-stopped
+    ports: !reset []
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN in .env}
+      ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL in .env}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - backend
+      - frontend
+
+volumes:
+  caddy_data:
+  caddy_config:
