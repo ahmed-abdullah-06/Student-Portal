@@ -8,7 +8,13 @@ const {
   round2,
 } = require('../src/utils/gpaCalculator');
 
-const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
+const prisma = new PrismaClient({
+  adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
+  transactionOptions: {
+    maxWait: 10000, // 10 seconds
+    timeout: 30000, // 30 seconds
+  },
+});
 
 const CURRENT_YEAR = 2026;
 const CURRENT_SEMESTER = 5;
