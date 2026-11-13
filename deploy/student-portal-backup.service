@@ -1,0 +1,8 @@
+[Unit]
+Description=Novastra PostgreSQL backup
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/student-portal
+ExecStart=/usr/bin/npm run backup --prefix backend

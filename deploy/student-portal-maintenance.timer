@@ -1,0 +1,9 @@
+[Unit]
+Description=Weekly Novastra retention and payment reconciliation
+
+[Timer]
+OnCalendar=Sun *-*-* 03:30:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

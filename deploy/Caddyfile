@@ -1,0 +1,36 @@
+{
+	email {$ACME_EMAIL}
+}
+
+{$DOMAIN} {
+	encode gzip zstd
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# API goes straight to the backend (single proxy hop)
+	handle /api/* {
+		reverse_proxy backend:5000
+	}
+
+	# Everything else is the SPA served by nginx
+	handle {
+		reverse_proxy frontend:80
+	}
+
+	log {
+		output file /data/access.log {
+			roll_size 20MiB
+			roll_keep 5
+		}
+	}
+}
+
+# Tenant subdomains (e.g. novastra.portal.university.edu) need a wildcard
+# certificate, which requires the DNS-01 challenge and a Caddy DNS plugin —
+# see docs/runbook.md ("Tenant subdomains"). Until then, tenants can be
+# selected with the X-Tenant header / portal switcher on the main domain.

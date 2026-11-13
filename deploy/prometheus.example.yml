@@ -1,0 +1,18 @@
+# Minimal Prometheus scrape config for the student portal VM.
+# Run Prometheus next to the stack (or anywhere that can reach it):
+#   prometheus --config.file=deploy/prometheus.example.yml
+global:
+  scrape_interval: 15s
+  evaluation_interval: 30s
+
+rule_files:
+  - alerts.yml
+
+scrape_configs:
+  - job_name: student-portal
+    metrics_path: /api/metrics
+    scheme: https
+    authorization:
+      credentials_file: /etc/prometheus/portal-metrics-token   # contents: METRICS_TOKEN value
+    static_configs:
+      - targets: ['portal.university.edu']

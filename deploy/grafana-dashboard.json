@@ -1,0 +1,31 @@
+{
+  "title": "Novastra Student Portal",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Request rate",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [{ "expr": "sum(rate(http_requests_total[5m]))", "legendFormat": "requests/sec" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "5xx error rate",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [{ "expr": "sum(rate(http_requests_total{status=\"5xx\"}[5m]))", "legendFormat": "errors/sec" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Average latency",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [{ "expr": "sum(rate(http_request_duration_seconds_sum[5m])) / clamp_min(sum(rate(http_request_duration_seconds_count[5m])), 0.001)", "legendFormat": "seconds" }]
+    },
+    {
+      "type": "stat",
+      "title": "Database health",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [{ "expr": "portal_db_up", "legendFormat": "database" }]
+    }
+  ]
+}

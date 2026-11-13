@@ -1,0 +1,8 @@
+[Unit]
+Description=Novastra retention and payment reconciliation
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/student-portal
+ExecStart=/bin/sh -c '/usr/bin/npm run retention --prefix backend && /usr/bin/npm run reconcile --prefix backend'

@@ -1,0 +1,69 @@
+# Prometheus alerting rules for the student portal.
+# Add to prometheus.yml:
+#   rule_files: [ '/etc/prometheus/alerts.yml' ]
+groups:
+  - name: portal
+    rules:
+      - alert: PortalTargetDown
+        expr: up{job="student-portal"} == 0
+        for: 2m
+        labels: { severity: critical }
+        annotations:
+          summary: "Student portal is unreachable"
+          description: "Prometheus cannot scrape {{ $labels.instance }} for 2 minutes."
+
+      - alert: DatabaseDown
+        expr: portal_db_up == 0
+        for: 2m
+        labels: { severity: critical }
+        annotations:
+          summary: "Portal database unreachable"
+          description: "The API reports SELECT 1 failing — check the postgres container."
+
+      - alert: HighErrorRate
+        expr: >
+          sum(rate(http_requests_total{status="5xx"}[5m]))
+          / clamp_min(sum(rate(http_requests_total[5m])), 0.001) > 0.05
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: "More than 5% of API requests are failing"
+          description: "Investigate backend logs (docker compose logs backend)."
+
+      - alert: HighAverageLatency
+        expr: >
+          sum(rate(http_request_duration_seconds_sum[5m]))
+          / clamp_min(sum(rate(http_request_duration_seconds_count[5m])), 0.001) > 1
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: "Average API latency above 1s for 10 minutes"
+
+      - alert: PaymentWebhookFailures
+        expr: increase(http_requests_total{group="/api/payments",status="5xx"}[15m]) > 5
+        for: 5m
+        labels: { severity: critical }
+        annotations:
+          summary: "Payment webhooks are failing"
+          description: "Check Stripe webhook delivery log and STRIPE_WEBHOOK_SECRET."
+
+      - alert: DiskPressure
+        expr: node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"} < 0.1
+        for: 15m
+        labels: { severity: warning }
+        annotations:
+          summary: "Less than 10% disk space left on the server"
+
+      - alert: CertificateExpiringSoon
+        expr: probe_ssl_earliest_cert_expiry - time() < 14 * 24 * 3600
+        for: 1h
+        labels: { severity: warning }
+        annotations:
+          summary: "Portal TLS certificate expires within 14 days"
+
+      - alert: DatabaseConnectionPoolPressure
+        expr: portal_db_pool_waiting > 0
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: "Database connection pool has waiting requests"
